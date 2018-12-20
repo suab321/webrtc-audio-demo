@@ -38,26 +38,26 @@ function initiateCall(audio) {
         audio: audio
     }
     socket.emit('create or join', roomNumber);
-    divSelectRoom.style = "display: none;";
-    divConferenceRoom.style = "display: block;";
 }
 
 // message handlers
 socket.on('created', function (room) {
+    localVideo.style.display='block';
     navigator.mediaDevices.getUserMedia(streamConstraints).then(function (stream) {
-        addLocalStream(stream);
+       addLocalStream(stream);
         isCaller = true;
     }).catch(function (err) {
-        console.log('An error ocurred when accessing media devices');
+        console.log(err);
     });
 });
 
 socket.on('joined', function (room) {
+    localVideo.style.display='block'
     navigator.mediaDevices.getUserMedia(streamConstraints).then(function (stream) {
-        addLocalStream(stream);
+       addLocalStream(stream);
         socket.emit('ready', roomNumber);
     }).catch(function (err) {
-        console.log('An error ocurred when accessing media devices');
+        console.log(err);
     });
 });
 
@@ -114,7 +114,7 @@ function onIceCandidate(event) {
 }
 
 function onAddStream(event) {
-    remoteVideo.src = URL.createObjectURL(event.stream);
+    remoteVideo.srcObject = event.stream
     remoteStream = event.stream;
     if (remoteStream.getAudioTracks().length > 0) {
         addAudioEvent('Remote user is sending Audio');
@@ -144,7 +144,7 @@ function setLocalAndAnswer(sessionDescription) {
 //utility functions
 function addLocalStream(stream) {
     localStream = stream;
-    localVideo.src = URL.createObjectURL(stream);
+    localVideo.srcObject = stream
 
     if (stream.getAudioTracks().length > 0) {
         btnMute.style = "display: block";
